@@ -1,0 +1,492 @@
+openapi: 3.0.3
+info:
+  title: Todo List API - OpenAPI 3.0
+  description: API for managing a todo list
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: task
+    description: Operations about tasks
+
+  - name: user
+    description: Operations about user
+paths:
+  /task:
+    get:
+        tags:
+          - task
+        summary: Returns all tasks from the system that the user has access to
+        operationId: getAllTasks
+        responses:
+          '200':
+            description: A list of tasks.
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+              application/xml:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+        security:
+          - todolist_auth:
+              - write:tasks
+              - read:tasks
+    put:
+      tags:
+        - task
+      summary: Update an existing task
+      description: Update an existing task by Id
+      operationId: updateTask
+      requestBody:
+        description: Update an existent task in the list
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Task not found
+        '405':
+          description: Validation exception
+      security:
+        - todolist_auth:
+            - write:tasks
+            - read:tasks
+    post:
+      tags:
+        - task
+      summary: Add a new task to the list
+      description: Add a new task to the list
+      operationId: addTask
+      requestBody:
+        description: Create a new task in the list
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Task'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Task'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '405':
+          description: Invalid input
+      security:
+        - todolist_auth:
+            - write:tasks
+            - read:tasks
+
+  /task/{taskId}:
+    get:
+      tags:
+        - task
+      summary: Find task by ID
+      description: Returns a single task
+      operationId: getTaskById
+      parameters:
+        - name: taskId
+          in: path
+          description: ID of task to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Task not found
+      security:
+        - api_key: [ ]
+        - todolist_auth:
+            - write:tasks
+            - read:tasks
+            -
+    delete:
+      tags:
+        - task
+      summary: Deletes a task
+      description: delete a task
+      operationId: deleteTask
+    parameters:
+      - name: api_key
+        in: header
+        description: ''
+        required: false
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        description: Task id to delete
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      '400':
+        description: Invalid task value
+    security:
+      - todolist_auth:
+          - write:tasks
+          - read:tasks
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+  /user/createWithList:
+    post:
+      tags:
+        - user
+      summary: Creates list of users with given input array
+      description: Creates list of users with given input array
+      operationId: createUsersWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: successful operation
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters: [ ]
+      responses:
+        default:
+          description: successful operation
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: successful operation
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+components:
+  schemas:
+    Task:
+      required:
+        - title
+        - description
+      type: object
+      properties:
+        taskId:
+          type: integer
+          format: int64
+          example: 10
+        category:
+          $ref: #/components/schemas/Category
+        title:
+          type: string
+          example: fehgui
+        description:
+          type: string
+          example: fehgui
+        dueDate:
+          type: string
+          format: date
+        priority:
+          type: string
+          example: high
+          enum:
+            - high
+            - medium
+            - low
+        status:
+          type: string
+          description: Task Status
+          example: completed
+          enum:
+            - open
+            - ongoing
+            - completed
+            - overdue
+      xml:
+        name: task
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Socializing
+      xml:
+        name: category
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        username:
+          type: string
+          example: theUser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
+        phone:
+          type: string
+          example: '12345'
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+          example: 1
+      xml:
+        name: user
+
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Task:
+      description: Task object that needs to be added to the list
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Task'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Task'
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+  securitySchemes:
+    todolist_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:8080/oauth/authorize
+          scopes:
+            write:tasks: modify tasks in your account
+            read:tasks: read your tasks
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
