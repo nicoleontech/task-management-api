@@ -31,13 +31,7 @@ public class TaskController implements TaskApi {
             taskEntityList = taskManager.getAllTasks();
             List<Task> taskList = new ArrayList<>();
             for (TaskEntity taskEntity : taskEntityList) {
-                Task task = new Task();
-                task.setTaskId(taskEntity.getTaskId());
-                task.setTitle(taskEntity.getTitle());
-                task.setDescription(taskEntity.getDescription());
-                task.setStatus(taskEntity.getStatus());
-                task.setPriority(taskEntity.getPriority());
-                task.setDueDate(taskEntity.getDueDate());
+                Task task = map(taskEntity);
                 taskList.add(task);
             }
             return new ResponseEntity<>(taskList, HttpStatus.OK);
@@ -47,20 +41,14 @@ public class TaskController implements TaskApi {
         }
     }
 
-    
+
     @Override
     public ResponseEntity<Task> getTaskById(Long taskId, String apiKey) {
         TaskEntity taskEntity;
         try {
             taskEntity = taskManager.getTaskById(taskId);
-            Task task = new Task();
-            System.out.println(taskEntity.getTaskId());
-            task.setTaskId(taskId);
-            task.setTitle(taskEntity.getTitle());
-            task.setDescription(taskEntity.getDescription());
-            task.setDueDate(taskEntity.getDueDate());
-            task.setStatus(taskEntity.getStatus());
-            task.setPriority(taskEntity.getPriority());
+            Task task = map(taskEntity);
+            // System.out.println(taskEntity.getTaskId());
             return new ResponseEntity<>(task, HttpStatus.OK);
         } catch (RuntimeException e) {
             e.printStackTrace();
