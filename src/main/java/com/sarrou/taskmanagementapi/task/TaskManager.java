@@ -1,5 +1,6 @@
 package com.sarrou.taskmanagementapi.task;
 
+import com.sarrou.api.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +27,19 @@ public class TaskManager {
 
     public List<TaskEntity> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public TaskEntity insertTask(Task task) {
+        return taskRepository.save(convertToTaskEntity(task));
+    }
+
+    private static TaskEntity convertToTaskEntity(Task dto) {
+        return new TaskEntity(
+                dto.getTaskId(),
+                dto.getTitle(),
+                dto.getDescription(),
+                dto.getDueDate(),
+                dto.getPriority(),
+                dto.getStatus());
     }
 }

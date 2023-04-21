@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +56,16 @@ public class TaskController implements TaskApi {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Override
+    public ResponseEntity<Task> addTask(Task task) {
+        TaskEntity taskEntity = taskManager.insertTask(task);
+        Task taskDto = map(taskEntity);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .buildAndExpand(taskDto.getTaskId())
+                .toUri();
+        return ResponseEntity.created(location).body(taskDto);
     }
 
     private Task map(TaskEntity taskEntity) {
