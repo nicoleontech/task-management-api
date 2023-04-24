@@ -5,8 +5,6 @@ import com.sarrou.api.TaskApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,10 +18,12 @@ import java.util.List;
 public class TaskController implements TaskApi {
 
     private final TaskManager taskManager;
+    private final TaskConverter taskConverter;
 
     @Autowired
-    public TaskController(TaskManager taskManager) {
+    public TaskController(TaskManager taskManager, TaskConverter taskConverter) {
         this.taskManager = taskManager;
+        this.taskConverter = taskConverter;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TaskController implements TaskApi {
             taskEntityList = taskManager.getAllTasks();
             List<Task> taskList = new ArrayList<>();
             for (TaskEntity taskEntity : taskEntityList) {
-                Task task = map(taskEntity);
+                Task task = taskConverter.mapToDto(taskEntity);
                 taskList.add(task);
             }
             return new ResponseEntity<>(taskList, HttpStatus.OK);
@@ -49,7 +49,7 @@ public class TaskController implements TaskApi {
         TaskEntity taskEntity;
         try {
             taskEntity = taskManager.getTaskById(taskId);
-            Task task = map(taskEntity);
+            Task task = taskConverter.mapToDto(taskEntity);
             // System.out.println(taskEntity.getTaskId());
             return new ResponseEntity<>(task, HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -61,21 +61,12 @@ public class TaskController implements TaskApi {
     @Override
     public ResponseEntity<Task> addTask(Task task) {
         TaskEntity taskEntity = taskManager.insertTask(task);
-        Task taskDto = map(taskEntity);
+        Task taskDto = taskConverter.mapToDto(taskEntity);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .buildAndExpand(taskDto.getTaskId())
                 .toUri();
         return ResponseEntity.created(location).body(taskDto);
     }
 
-    private Task map(TaskEntity taskEntity) {
-        Task task = new Task();
-        task.setTaskId(taskEntity.getTaskId());
-        task.setTitle(taskEntity.getTitle());
-        task.setDescription(taskEntity.getDescription());
-        task.setDueDate(taskEntity.getDueDate());
-        task.setPriority(taskEntity.getPriority());
-        task.setStatus(taskEntity.getStatus());
-        return task;
-    }
+
 }
