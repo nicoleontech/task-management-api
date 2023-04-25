@@ -1,6 +1,7 @@
 package com.sarrou.taskmanagementapi.task;
 
 import com.sarrou.api.Task;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +13,19 @@ public class TaskManager {
 
     private final TaskRepository taskRepository;
 
+    private final TaskConverter taskConverter;
+
     @Autowired
-    public TaskManager(TaskRepository taskRepository) {
+    public TaskManager(TaskRepository taskRepository, TaskConverter taskConverter) {
         this.taskRepository = taskRepository;
+        this.taskConverter = taskConverter;
     }
 
-    public TaskEntity getTaskById(Long id) {
+    public TaskEntity getTaskById(Long id)  {
+
         Optional<TaskEntity> task = taskRepository.findById(id);
         if (task.isEmpty()) {
-            throw new RuntimeException();
+            throw new EntityNotFoundException();
         }
         return task.get();
     }
@@ -30,16 +35,20 @@ public class TaskManager {
     }
 
     public TaskEntity insertTask(Task task) {
-        return taskRepository.save(convertToTaskEntity(task));
+        return taskRepository.save(taskConverter.mapToEntity(task));
     }
 
-    private static TaskEntity convertToTaskEntity(Task dto) {
-        return new TaskEntity(
-                dto.getTaskId(),
-                dto.getTitle(),
-                dto.getDescription(),
-                dto.getDueDate(),
-                dto.getPriority(),
-                dto.getStatus());
+    public TaskEntity updateTask(Task task) {
+        Optional<TaskEntity> taskEntity = taskRepository.findById(task.getTaskId());
+        if (taskEntity.get() == null) {
+            throw new RuntimeException();
+        }
+        return taskRepository.save(taskConverter.mapToEntity(task));
     }
+
+    public void deleteTask(Long taskId, String apiKey) {
+        taskRepository.deleteById(taskId);
+    }
+
+
 }

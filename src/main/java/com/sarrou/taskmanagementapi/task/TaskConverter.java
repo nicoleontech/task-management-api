@@ -1,10 +1,14 @@
 package com.sarrou.taskmanagementapi.task;
 
 import com.sarrou.api.Task;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /*
 Class that converts from entity to dto and vice versa.
  */
+@Component
 public class TaskConverter {
 
     public Task mapToDto(TaskEntity taskEntity) {

@@ -1,5 +1,6 @@
 package com.sarrou.taskmanagementapi.task;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sarrou.api.Task;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class TaskEntity {
     private String description;
 
     @Column(name = "DUE_DATE")
+//    @JsonFormat(pattern = "dd-mm-yyyy")
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)

@@ -2,8 +2,10 @@ package com.sarrou.taskmanagementapi.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sarrou.api.Task;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,56 +17,31 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
 class TaskControllerTest {
 
+    private static final String API_TASK_PATH = "/api/task";
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
     private TaskManager taskManager;
 
-    TaskEntity taskEntity1 = new TaskEntity(1L, "project 1", "backend rest api", LocalDate.of(2023, 4, 17),
-            Task.PriorityEnum.HIGH, Task.StatusEnum.OPEN);
+    @MockBean
+    private TaskConverter taskConverter;
 
-    TaskEntity taskEntity2 = new TaskEntity(1L, "project 2", "testing", LocalDate.of(2023, 4, 17),
-            Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING);
-
-    @Test
-    void getAllTasksReturnsHttpStatusOk() throws Exception {
-        List<TaskEntity> taskEntityList = new ArrayList<>();
-        taskEntityList.add(taskEntity1);
-        taskEntityList.add(taskEntity2);
-        var resultList = taskManager.getAllTasks();
-        when(taskManager.getAllTasks()).thenReturn(resultList);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/task")
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().is(200));
-    }
-
-    @Test
-    void addTaskReturnsCreatedResponse() throws Exception {
-        Task task = new Task().taskId(1L).title("project 1")
-                .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
-        when(taskManager.insertTask(task))
-                .thenReturn(expectedTask());
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        mockMvc.perform(post("/api/task").contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(task)))
-                .andExpect(MockMvcResultMatchers.status().isCreated()
-                );
-    }
 
     private TaskEntity expectedTask() {
         return TaskEntity.builder()
@@ -73,5 +50,78 @@ class TaskControllerTest {
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
 
     }
+
+    @Test
+    void getAllTasksReturnsHttpStatusOk() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().is(200));
+    }
+
+    @Test
+    void getAllTasksReturnsListOfTasks() throws Exception {
+        List<TaskEntity> taskEntityList = new ArrayList<>(
+                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", LocalDate.of(2023, 4, 17),
+                                Task.PriorityEnum.HIGH, Task.StatusEnum.OPEN),
+                        new TaskEntity(2L, "project 2", "testing", LocalDate.of(2023, 4, 17),
+                                Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING)));
+        when(taskManager.getAllTasks()).thenReturn(taskEntityList);
+        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()").value(taskEntityList.size()))
+                .andDo(print());
+    }
+
+    @Test
+    void getTaskByIdReturnsTaskWithThatId() throws Exception {
+        TaskEntity taskEntity = new TaskEntity().builder().taskId(1L).title("project 1")
+                .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
+                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
+        when(taskManager.getTaskById(taskEntity.getTaskId())).thenReturn(taskEntity);
+        when(taskConverter.mapToDto(Mockito.any())).thenCallRealMethod();
+        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", taskEntity.getTaskId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.taskId").value(taskEntity.getTaskId()))
+                .andExpect(jsonPath("$.title").value(taskEntity.getTitle()))
+                .andExpect(jsonPath("$.description").value(taskEntity.getDescription()))
+                .andExpect(jsonPath("$.dueDate").value(taskEntity.getDueDate().toString()))
+                .andExpect(jsonPath("$.status").value(taskEntity.getStatus().getValue()))
+                .andExpect(jsonPath("$.priority").value(taskEntity.getPriority().getValue()))
+                .andDo(print());
+    }
+
+    @Test
+    void getTaskByIdReturnsBadRequestWhenInvalidId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", "invalidId"))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    void getTaskByIdReturnsNotFoundWhenIdIsNotPresent() throws Exception {
+//
+        when(taskManager.getTaskById(3L)).thenThrow(new EntityNotFoundException());
+        when(taskConverter.mapToDto(Mockito.any())).thenCallRealMethod();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", 3L))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+
+    @Test
+    void addTaskReturnsCreatedResponseStatus() throws Exception {
+        Task task = new Task().taskId(1L).title("project 1")
+                .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
+                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+        when(taskManager.insertTask(task))
+                .thenReturn(expectedTask());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task)))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
 
 }
