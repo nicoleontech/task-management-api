@@ -36,6 +36,33 @@ class TaskConverterTest {
     }
 
     @Test
+    void sutShouldConvertEntityToDtoWithTitleAndDescription(){
+        var resultDto = sut.mapToDto(TaskEntity.builder()
+                .taskId(1L).dueDate(LocalDate.now())
+                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build());
+
+        Task taskDto = new Task();
+        taskDto.setTaskId(1L);
+        taskDto.setDescription(null);
+        taskDto.setTitle(null);
+        taskDto.setDueDate(LocalDate.now());
+        taskDto.setPriority(Task.PriorityEnum.HIGH);
+        taskDto.setStatus(Task.StatusEnum.OPEN);
+
+        assertThat(taskDto).isEqualTo(resultDto);
+    }
+
+    @Test
+    void sutShouldConvertEntityToDtoWhenStatusIsValid(){
+        return;
+    }
+
+    @Test
+    void sutShouldConvertEntityToDtoWhenPriorityIsValid(){
+        return;
+    }
+
+    @Test
     void sutShouldConvertDtoToEntity() {
         var taskEntity = TaskEntity.builder()
                 .taskId(1L).title("my title")

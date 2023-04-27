@@ -3,6 +3,7 @@ package com.sarrou.taskmanagementapi.task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sarrou.api.Task;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
