@@ -2,6 +2,7 @@ package com.sarrou.taskmanagementapi.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sarrou.api.Task;
+import com.sarrou.taskmanagementapi.task.exceptions.GlobalExceptionHandler;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,7 +43,6 @@ class TaskControllerTest {
 
     @MockBean
     private TaskConverter taskConverter;
-
 
     private TaskEntity expectedTask() {
         return TaskEntity.builder()
@@ -78,7 +79,7 @@ class TaskControllerTest {
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
         when(taskManager.getTaskById(taskEntity.getTaskId())).thenReturn(taskEntity);
-        when(taskConverter.mapToDto(Mockito.any())).thenCallRealMethod();
+        when(taskConverter.mapToDto(any())).thenCallRealMethod();
         mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", taskEntity.getTaskId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.taskId").value(taskEntity.getTaskId()))
@@ -99,9 +100,8 @@ class TaskControllerTest {
 
     @Test
     void getTaskByIdReturnsNotFoundWhenIdIsNotPresent() throws Exception {
-//
         when(taskManager.getTaskById(3L)).thenThrow(new EntityNotFoundException());
-        when(taskConverter.mapToDto(Mockito.any())).thenCallRealMethod();
+        when(taskConverter.mapToDto(any())).thenCallRealMethod();
 
         mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", 3L))
                 .andExpect(status().isNotFound())
@@ -121,6 +121,47 @@ class TaskControllerTest {
         mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(task)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    void addTaskReturnsBadRequestWhenTitleAndDescriptionAreNull() throws Exception {
+        Task task = new Task()
+                .taskId(1L)
+                //.title("project 1")
+                // .description("backend rest api")
+                .dueDate(LocalDate.of(2023, 4, 22))
+                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+        when(taskManager.insertTask(task))
+                .thenReturn(expectedTask());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void addTaskReturnsBadRequestWhenTitleAndDescriptionAreEmptyOrLengthLessThanFiveChars() throws Exception {
+        Task task = new Task()
+                .taskId(1L)
+                .title("")
+                .description("")
+                .dueDate(LocalDate.of(2023, 4, 22))
+                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+        when(taskManager.insertTask(task))
+                .thenReturn(expectedTask());
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void addTaskReturnsBadRequestWhenIllegalArgException() throws Exception {
+        when(taskManager.insertTask(any())).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
 

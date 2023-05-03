@@ -4,9 +4,11 @@ import com.sarrou.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.mail.Address;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class TaskConverterTest {
 
@@ -36,30 +38,24 @@ class TaskConverterTest {
     }
 
     @Test
-    void sutShouldConvertEntityToDtoWithTitleAndDescription(){
-        var resultDto = sut.mapToDto(TaskEntity.builder()
-                .taskId(1L).dueDate(LocalDate.now())
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build());
-
-        Task taskDto = new Task();
-        taskDto.setTaskId(1L);
-        taskDto.setDescription(null);
-        taskDto.setTitle(null);
-        taskDto.setDueDate(LocalDate.now());
-        taskDto.setPriority(Task.PriorityEnum.HIGH);
-        taskDto.setStatus(Task.StatusEnum.OPEN);
-
-        assertThat(taskDto).isEqualTo(resultDto);
+    void sutShouldThrowExceptionWhenPriorityIsNotValid() {
+        assertThatThrownBy(() -> sut.mapToDto(TaskEntity.builder()
+                .taskId(1L).title("my title")
+                .description("project").dueDate(LocalDate.now())
+                .status(Task.StatusEnum.OPEN)
+                .priority(Task.PriorityEnum.valueOf("wrong")).build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void sutShouldConvertEntityToDtoWhenStatusIsValid(){
-        return;
-    }
-
-    @Test
-    void sutShouldConvertEntityToDtoWhenPriorityIsValid(){
-        return;
+    void sutShouldThrowExceptionWhenStatusIsNotValid() {
+        assertThatThrownBy(() -> sut.mapToDto(TaskEntity.builder()
+                .taskId(1L).title("my title")
+                .description("project").dueDate(LocalDate.now())
+                .status(Task.StatusEnum.valueOf("i am funny"))
+                .priority(Task.PriorityEnum.LOW)
+                .build()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

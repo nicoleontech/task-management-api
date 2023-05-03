@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    target-branch: "dev_branch"
+    schedule:
+      interval: "daily"
+    allow:
+      dependency-type: "direct"

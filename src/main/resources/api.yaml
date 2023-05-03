@@ -375,9 +375,11 @@ components:
         category:
           $ref: #/components/schemas/Category
         title:
+          minLength: 5
           type: string
           example: fehgui
         description:
+          minLength: 5
           type: string
           example: fehgui
         dueDate:
