@@ -365,21 +365,20 @@ components:
     Task:
       required:
         - title
-        - description
+        - category_name
       type: object
       properties:
         taskId:
           type: integer
           format: int64
           example: 10
-        category:
-          $ref: #/components/schemas/Category
+        category_name:
+          type: string
+          example: Socializing
         title:
-          minLength: 5
           type: string
           example: fehgui
         description:
-          minLength: 5
           type: string
           example: fehgui
         dueDate:

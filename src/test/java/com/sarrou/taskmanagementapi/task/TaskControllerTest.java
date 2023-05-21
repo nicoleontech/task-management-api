@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 class TaskControllerTest {
 
-    private static final String API_TASK_PATH = "/api/task";
+    private static final String API_TASK_PATH = "/api/v1/task";
     @Autowired
     MockMvc mockMvc;
 
@@ -45,8 +45,10 @@ class TaskControllerTest {
     private TaskConverter taskConverter;
 
     private TaskEntity expectedTask() {
+        var category = new CategoryEntity(1L, "socializing");
+
         return TaskEntity.builder()
-                .taskId(1L).title("project 1")
+                .taskId(1L).title("project 1").category(category)
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
 
@@ -61,10 +63,13 @@ class TaskControllerTest {
 
     @Test
     void getAllTasksReturnsListOfTasks() throws Exception {
+        var category = new CategoryEntity(1L, "socializing");
+
         List<TaskEntity> taskEntityList = new ArrayList<>(
-                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", LocalDate.of(2023, 4, 17),
+                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", category,
+                                LocalDate.of(2023, 4, 17),
                                 Task.PriorityEnum.HIGH, Task.StatusEnum.OPEN),
-                        new TaskEntity(2L, "project 2", "testing", LocalDate.of(2023, 4, 17),
+                        new TaskEntity(2L, "project 2", "testing", category, LocalDate.of(2023, 4, 17),
                                 Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING)));
         when(taskManager.getAllTasks()).thenReturn(taskEntityList);
         mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
@@ -75,7 +80,8 @@ class TaskControllerTest {
 
     @Test
     void getTaskByIdReturnsTaskWithThatId() throws Exception {
-        TaskEntity taskEntity = new TaskEntity().builder().taskId(1L).title("project 1")
+        var category = new CategoryEntity(1L, "socializing");
+        TaskEntity taskEntity = new TaskEntity().builder().taskId(1L).title("project 1").category(category)
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
         when(taskManager.getTaskById(taskEntity.getTaskId())).thenReturn(taskEntity);
@@ -85,6 +91,7 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.taskId").value(taskEntity.getTaskId()))
                 .andExpect(jsonPath("$.title").value(taskEntity.getTitle()))
                 .andExpect(jsonPath("$.description").value(taskEntity.getDescription()))
+                .andExpect(jsonPath("$.category_name").value(taskEntity.getCategory().getName()))
                 .andExpect(jsonPath("$.dueDate").value(taskEntity.getDueDate().toString()))
                 .andExpect(jsonPath("$.status").value(taskEntity.getStatus().getValue()))
                 .andExpect(jsonPath("$.priority").value(taskEntity.getPriority().getValue()))
@@ -111,7 +118,8 @@ class TaskControllerTest {
 
     @Test
     void addTaskReturnsCreatedResponseStatus() throws Exception {
-        Task task = new Task().taskId(1L).title("project 1")
+        var category = new CategoryEntity(1L, "socializing");
+        Task task = new Task().taskId(1L).title("project 1").categoryName(category.getName())
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
         when(taskManager.insertTask(task))
@@ -124,11 +132,12 @@ class TaskControllerTest {
     }
 
     @Test
-    void addTaskReturnsBadRequestWhenTitleAndDescriptionAreNull() throws Exception {
+    void addTaskReturnsBadRequestWhenTitleAndCategoryAreNull() throws Exception {
         Task task = new Task()
                 .taskId(1L)
                 //.title("project 1")
-                // .description("backend rest api")
+               // .categoryName("category name")
+                 .description("backend rest api")
                 .dueDate(LocalDate.of(2023, 4, 22))
                 .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
         when(taskManager.insertTask(task))
@@ -140,22 +149,22 @@ class TaskControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-    @Test
-    void addTaskReturnsBadRequestWhenTitleAndDescriptionAreEmptyOrLengthLessThanFiveChars() throws Exception {
-        Task task = new Task()
-                .taskId(1L)
-                .title("")
-                .description("")
-                .dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
-        when(taskManager.insertTask(task))
-                .thenReturn(expectedTask());
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(task)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
+//    @Test
+//    void addTaskReturnsBadRequestWhenTitleAndDescriptionAreEmptyOrLengthLessThanFiveChars() throws Exception {
+//        Task task = new Task()
+//                .taskId(1L)
+//                .title("")
+//                .description("")
+//                .dueDate(LocalDate.of(2023, 4, 22))
+//                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+//        when(taskManager.insertTask(task))
+//                .thenReturn(expectedTask());
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.findAndRegisterModules();
+//        mockMvc.perform(post(API_TASK_PATH).contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(task)))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
 
     @Test
     void addTaskReturnsBadRequestWhenIllegalArgException() throws Exception {

@@ -21,7 +21,7 @@ public class TaskEntity {
 
     @Id
     @Column(name = "TASKID")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
 
     @Column(name = "TITLE")
@@ -29,6 +29,10 @@ public class TaskEntity {
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")
