@@ -1,7 +1,12 @@
-package com.sarrou.taskmanagementapi.task;
+package com.sarrou.taskmanagementapi.task.web;
 
+import com.sarrou.api.Category;
 import com.sarrou.api.Task;
 import com.sarrou.api.TaskApi;
+import com.sarrou.taskmanagementapi.task.service.CategoryEntity;
+import com.sarrou.taskmanagementapi.task.service.CategoryService;
+import com.sarrou.taskmanagementapi.task.service.TaskEntity;
+import com.sarrou.taskmanagementapi.task.service.TaskManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +25,7 @@ import java.util.stream.Collectors;
 public class TaskController implements TaskApi {
 
     private final TaskManager taskManager;
+
     private final TaskConverter taskConverter;
 
     @Autowired
@@ -30,25 +36,11 @@ public class TaskController implements TaskApi {
 
     @Override
     public ResponseEntity<List<Task>> getAllTasks() {
-//        List<TaskEntity> taskEntityList;
-//        try {
-//            taskEntityList = taskManager.getAllTasks();
-//            List<Task> taskList = new ArrayList<>();
-//            for (TaskEntity taskEntity : taskEntityList) {
-//                Task task = taskConverter.mapToDto(taskEntity);
-//                taskList.add(task);
-//            }
-//            return new ResponseEntity<>(taskList, HttpStatus.OK);
-//        } catch (RuntimeException e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
         var taskList = taskManager.getAllTasks().stream()
                 .map(taskConverter::mapToDto)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(taskList, HttpStatus.OK);
     }
-
 
     @Override
     public ResponseEntity<Task> getTaskById(Long taskId, String apiKey) {

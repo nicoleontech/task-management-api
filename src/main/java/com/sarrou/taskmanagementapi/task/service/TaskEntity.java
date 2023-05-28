@@ -1,13 +1,13 @@
-package com.sarrou.taskmanagementapi.task;
+package com.sarrou.taskmanagementapi.task.service;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sarrou.api.Task;
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TASKS")
+@Table(name = "tasks")
 public class TaskEntity {
 
     @Id
@@ -30,9 +30,12 @@ public class TaskEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+
+    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
+    private Long categoryId;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")
@@ -40,10 +43,12 @@ public class TaskEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PRIORITY")
+//    @Type(PostgreSQLEnumType.class)
     private Task.PriorityEnum priority;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
+//    @Type(PostgreSQLEnumType.class)
     private Task.StatusEnum status;
 
 

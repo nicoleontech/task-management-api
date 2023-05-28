@@ -1,4 +1,4 @@
-package com.sarrou.taskmanagementapi.task;
+package com.sarrou.taskmanagementapi.task.service;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "CATEGORIES")
+@Table(name = "categories")
 
 public class CategoryEntity {
 
@@ -23,7 +26,4 @@ public class CategoryEntity {
     @Column(name = "name")
     private String name;
 
-    public CategoryEntity(Long id) {
-        this.id = id;
-    }
 }

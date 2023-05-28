@@ -1,12 +1,13 @@
 package com.sarrou.taskmanagementapi.task;
 
 import com.sarrou.api.Task;
-import org.junit.jupiter.api.AfterEach;
+import com.sarrou.taskmanagementapi.task.service.CategoryEntity;
+import com.sarrou.taskmanagementapi.task.service.TaskEntity;
+import com.sarrou.taskmanagementapi.task.web.TaskConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 
@@ -19,17 +20,15 @@ class TaskConverterTest {
     @Mock
     private CategoryRepository categoryRepository;
 
-    private AutoCloseable closeable;
-
     @BeforeEach
     void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this);
         sut = new TaskConverter(categoryRepository);
     }
 
     @Test
     void sutShouldConvertEntityToDto() {
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new CategoryEntity(1L, "socializing");
 
         Task taskDto = new Task();
         taskDto.setTaskId(1L);
@@ -51,7 +50,7 @@ class TaskConverterTest {
 
     @Test
     void sutShouldThrowExceptionWhenPriorityIsNotValid() {
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new CategoryEntity(1L, "socializing");
 
         assertThatThrownBy(() -> sut.mapToDto(TaskEntity.builder()
                 .taskId(1L).title("my title").category(category)
@@ -64,7 +63,7 @@ class TaskConverterTest {
     @Test
     void sutShouldThrowExceptionWhenStatusIsNotValid() {
 
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new CategoryEntity(1L, "socializing");
 
         assertThatThrownBy(() -> sut.mapToDto(TaskEntity.builder()
                 .taskId(1L).title("my title").category(category)
@@ -78,7 +77,6 @@ class TaskConverterTest {
     @Test
     void sutShouldConvertDtoToEntity() {
 
-
         Task taskDto = new Task();
         taskDto.setTaskId(1L);
         taskDto.setDescription("project");
@@ -88,19 +86,18 @@ class TaskConverterTest {
         taskDto.setPriority(Task.PriorityEnum.HIGH);
         taskDto.setStatus(Task.StatusEnum.OPEN);
 
-        var taskEntity = TaskEntity.builder()
-                .taskId(1L).title("my title").category(categoryRepository.findCategoryEntityByName(taskDto.getCategoryName()))
-                .description("project").dueDate(LocalDate.now())
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setTaskId(taskDto.getTaskId());
+        taskEntity.setDescription(taskDto.getDescription());
+        taskEntity.setTitle(taskDto.getTitle());
+        taskEntity.setCategory(categoryRepository.findByName(taskDto.getCategoryName()));
+        taskEntity.setDueDate(taskDto.getDueDate());
+        taskEntity.setPriority(taskDto.getPriority());
+        taskEntity.setStatus(taskDto.getStatus());
 
         var resultEntity = sut.mapToEntity(taskDto);
 
-        assertThat(taskEntity).isEqualTo(resultEntity);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        closeable.close();
+        assertThat(resultEntity).isEqualTo(taskEntity);
     }
 
 
