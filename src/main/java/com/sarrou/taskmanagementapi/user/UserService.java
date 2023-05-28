@@ -15,6 +15,10 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+    public void initSetup(){
+        User user = new User("nicole.sar.93@gmail.com");
+        userRepository.save(user);
+    }
 
 
 }
