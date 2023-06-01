@@ -1,7 +1,8 @@
-package com.sarrou.taskmanagementapi.task;
+package com.sarrou.taskmanagementapi.task.web;
 
 import com.sarrou.api.Task;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sarrou.taskmanagementapi.task.CategoryRepository;
+import com.sarrou.taskmanagementapi.task.service.TaskEntity;
 import org.springframework.stereotype.Component;
 
 /*
@@ -9,9 +10,9 @@ Class that converts from entity to dto and vice versa.
  */
 @Component
 public class TaskConverter {
+
     private final CategoryRepository categoryRepository;
 
-    @Autowired
     public TaskConverter(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
@@ -31,15 +32,16 @@ public class TaskConverter {
 
     public TaskEntity mapToEntity(Task task) {
 
-        return TaskEntity.builder()
-                .taskId(task.getTaskId())
-                .title(task.getTitle())
+        return TaskEntity.builder().
+                taskId(task.getTaskId())
                 .description(task.getDescription())
-                .category(categoryRepository.findCategoryEntityByName(task.getCategoryName()))
+                .title(task.getTitle())
+                .category(categoryRepository.findByName(task.getCategoryName()))
                 .dueDate(task.getDueDate())
                 .priority(task.getPriority())
-                .status(task.getStatus())
-                .build();
+                .status(task.getStatus()).build();
+
+
     }
 
 }
