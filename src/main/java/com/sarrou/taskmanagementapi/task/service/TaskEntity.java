@@ -34,8 +34,8 @@ public class TaskEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
-    private Long categoryId;
+//    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
+//    private Long categoryId;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")
