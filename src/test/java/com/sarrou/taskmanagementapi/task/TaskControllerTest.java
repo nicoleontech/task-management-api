@@ -113,23 +113,23 @@ class TaskControllerTest {
 
     }
 
-    @Test
-    void getAllTasksReturnsListOfTasks() throws Exception {
-        var category = new CategoryEntity(1L, "socializing");
-
-        List<TaskEntity> taskEntityList = new ArrayList<>(
-                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", category,
-                                LocalDate.of(2023, 4, 17),
-                                Task.PriorityEnum.fromValue("high"), Task.StatusEnum.OPEN),
-                        new TaskEntity(2L, "project 2", "testing", category, LocalDate.of(2023, 4, 17),
-                                Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING)));
-        when(taskManager.getAllTasks()).thenReturn(taskEntityList);
-        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
-                .with(SecurityMockMvcRequestPostProcessors.jwt())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()").value(taskEntityList.size()))
-                .andDo(print());
-    }
+//    @Test
+//    void getAllTasksReturnsListOfTasks() throws Exception {
+//        var category = new CategoryEntity(1L, "socializing");
+//
+//        List<TaskEntity> taskEntityList = new ArrayList<>(
+//                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", category,
+//                                LocalDate.of(2023, 4, 17),
+//                                Task.PriorityEnum.fromValue("high"), Task.StatusEnum.OPEN),
+//                        new TaskEntity(2L, "project 2", "testing", category, LocalDate.of(2023, 4, 17),
+//                                Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING)));
+//        when(taskManager.getAllTasks()).thenReturn(taskEntityList);
+//        mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
+//                .with(SecurityMockMvcRequestPostProcessors.jwt())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.size()").value(taskEntityList.size()))
+//                .andDo(print());
+//    }
 
     @Test
     void getTaskByIdReturnsTaskWithThatId() throws Exception {

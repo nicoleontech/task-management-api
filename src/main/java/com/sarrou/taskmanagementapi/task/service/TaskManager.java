@@ -3,6 +3,7 @@ package com.sarrou.taskmanagementapi.task.service;
 import com.sarrou.api.Task;
 import com.sarrou.taskmanagementapi.task.web.TaskConverter;
 import com.sarrou.taskmanagementapi.task.TaskRepository;
+import com.sarrou.taskmanagementapi.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,13 @@ public class TaskManager {
 
     private final TaskConverter taskConverter;
 
+    private final UserService userService;
+
     @Autowired
-    public TaskManager(TaskRepository taskRepository, TaskConverter taskConverter) {
+    public TaskManager(TaskRepository taskRepository, TaskConverter taskConverter, UserService userService) {
         this.taskRepository = taskRepository;
         this.taskConverter = taskConverter;
+        this.userService = userService;
     }
 
     public TaskEntity getTaskById(Long id)  {
@@ -34,8 +38,16 @@ public class TaskManager {
     }
 
     public List<TaskEntity> getAllTasks() {
+
         return taskRepository.findAll();
     }
+
+    public List<TaskEntity> getAllTasksForLoggedInUser() {
+        String loggedInUserEmail =userService.getLoggedInEmail();
+
+        return taskRepository.findAllByUserEmail(loggedInUserEmail);
+    }
+
 
     @Transactional
     public TaskEntity insertTask(Task task) {
