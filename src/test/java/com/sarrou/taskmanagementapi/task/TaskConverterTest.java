@@ -20,11 +20,11 @@ class TaskConverterTest {
     @Mock
     private CategoryRepository categoryRepository;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        sut = new TaskConverter(categoryRepository);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        MockitoAnnotations.openMocks(this);
+//        sut = new TaskConverter(categoryRepository);
+//    }
 
     @Test
     void sutShouldConvertEntityToDto() {

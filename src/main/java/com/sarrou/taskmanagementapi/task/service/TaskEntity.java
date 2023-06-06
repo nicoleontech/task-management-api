@@ -1,6 +1,7 @@
 package com.sarrou.taskmanagementapi.task.service;
 
 import com.sarrou.api.Task;
+import com.sarrou.taskmanagementapi.user.User;
 import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,8 +35,12 @@ public class TaskEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+//    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
+//    private Long categoryId;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")

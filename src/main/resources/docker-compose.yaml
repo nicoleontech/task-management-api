@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  keycloak:
+    image: jboss/keycloak
+    restart: on-failure
+    command:
+      - "-b"
+      - "0.0.0.0"
+      - "-Dkeycloak.import=/home/keycloak/realm-export.json"
+    volumes:
+      - C:\Users\NS\IdeaProjects\task-management-api\src\main\resources\start-up\realm-export.json:/home/keycloak/realm-export.json
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=postgres
+      - DB_USER=task_owner
+      - DB_PASSWORD=topSecret
+      - DB_ADDR=keycloak-db
+      - DB_PORT=5432
+      - DB_DATABASE=keycloak_dev_db
+    ports:
+      - "8088:8080"
+    depends_on:
+      - keycloak-db
+
+  keycloak-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: task_owner
+      POSTGRES_PASSWORD: topSecret
+      POSTGRES_DB: keycloak_dev_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

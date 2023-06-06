@@ -3,6 +3,7 @@ package com.sarrou.taskmanagementapi.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,7 +32,7 @@ public class WebSecurityConfiguration {
                 .configurationSource(corsConfigurationSource())
                 .and().authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/status", "/actuator/headers", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/task", "/api/v1/category").hasAnyAuthority(USER_SCOPE)
+                        .requestMatchers("/api/v1/task/**", "/api/v1/category").hasAnyAuthority(USER_SCOPE)
                         .anyRequest().denyAll())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))).sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -41,6 +42,8 @@ public class WebSecurityConfiguration {
     private CorsConfigurationSource corsConfigurationSource() {
         var configuration = new CorsConfiguration();
         configuration.applyPermitDefaultValues();
+        configuration.addAllowedMethod(HttpMethod.DELETE);
+        configuration.addAllowedMethod(HttpMethod.PUT);
         var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
