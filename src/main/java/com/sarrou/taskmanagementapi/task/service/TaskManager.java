@@ -1,6 +1,8 @@
-package com.sarrou.taskmanagementapi.task;
+package com.sarrou.taskmanagementapi.task.service;
 
 import com.sarrou.api.TaskDto;
+import com.sarrou.taskmanagementapi.task.Task;
+import com.sarrou.taskmanagementapi.task.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,10 @@ public class TaskManager {
 
     private final TaskRepository taskRepository;
 
-    private final TaskConverter taskConverter;
+    private final com.sarrou.taskmanagementapi.task.TaskConverter taskConverter;
 
     @Autowired
-    public TaskManager(TaskRepository taskRepository, TaskConverter taskConverter) {
+    public TaskManager(TaskRepository taskRepository, com.sarrou.taskmanagementapi.task.TaskConverter taskConverter) {
         this.taskRepository = taskRepository;
         this.taskConverter = taskConverter;
     }
@@ -35,6 +37,7 @@ public class TaskManager {
     }
 
     public Task insertTask(TaskDto task) {
+
         return taskRepository.save(taskConverter.mapToEntity(task));
     }
 

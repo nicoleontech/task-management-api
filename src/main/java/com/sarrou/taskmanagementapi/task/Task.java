@@ -1,11 +1,13 @@
 package com.sarrou.taskmanagementapi.task;
 
 import com.sarrou.api.TaskDto;
+import com.sarrou.taskmanagementapi.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 
@@ -28,9 +30,16 @@ public class Task {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
-    private Category category;
+    private com.sarrou.taskmanagementapi.task.service.Category category;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+//    @Column(name = "CATEGORY_ID", insertable = false, updatable = false)
+//    private Long categoryId;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")
@@ -42,7 +51,10 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
+//    @Type(PostgreSQLEnumType.class)
+
     private TaskDto.StatusEnum status;
+
 
 
 }
