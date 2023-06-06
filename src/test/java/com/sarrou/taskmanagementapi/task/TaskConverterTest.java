@@ -1,6 +1,5 @@
 package com.sarrou.taskmanagementapi.task;
 
-import com.sarrou.api.Task;
 import com.sarrou.api.TaskDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
