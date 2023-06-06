@@ -4,8 +4,10 @@ package com.sarrou.taskmanagementapi.task.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sarrou.api.TaskDto;
 import com.sarrou.taskmanagementapi.task.service.Category;
+import com.sarrou.taskmanagementapi.task.service.CategoryService;
 import com.sarrou.taskmanagementapi.task.service.Task;
 import com.sarrou.taskmanagementapi.task.service.TaskManager;
+import com.sarrou.taskmanagementapi.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +43,12 @@ class TaskControllerTest {
 
     @MockBean
     private TaskConverter taskConverter;
+
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private CategoryService categoryService;
 
     private Task expectedTask() {
         var category = new Category(1L, "socializing");
