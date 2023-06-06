@@ -1,6 +1,5 @@
 package com.sarrou.taskmanagementapi.task.web;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.sarrou.api.TaskDto;
 import com.sarrou.taskmanagementapi.task.CategoryRepository;
