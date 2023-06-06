@@ -1,6 +1,6 @@
 package com.sarrou.taskmanagementapi.task;
 
-import com.sarrou.api.Task;
+import com.sarrou.api.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +17,8 @@ public class TaskConverter {
     }
 
 
-    public Task mapToDto(TaskEntity taskEntity) {
-        Task task = new Task();
+    public TaskDto mapToDto(Task taskEntity) {
+        TaskDto task = new TaskDto();
         task.setTaskId(taskEntity.getTaskId());
         task.setTitle(taskEntity.getTitle());
         task.setDescription(taskEntity.getDescription());
@@ -29,9 +29,9 @@ public class TaskConverter {
         return task;
     }
 
-    public TaskEntity mapToEntity(Task task) {
+    public Task mapToEntity(TaskDto task) {
 
-        return TaskEntity.builder()
+        return Task.builder()
                 .taskId(task.getTaskId())
                 .title(task.getTitle())
                 .description(task.getDescription())

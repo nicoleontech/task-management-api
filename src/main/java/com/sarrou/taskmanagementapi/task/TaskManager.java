@@ -1,6 +1,6 @@
 package com.sarrou.taskmanagementapi.task;
 
-import com.sarrou.api.Task;
+import com.sarrou.api.TaskDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,25 +21,25 @@ public class TaskManager {
         this.taskConverter = taskConverter;
     }
 
-    public TaskEntity getTaskById(Long id)  {
+    public Task getTaskById(Long id)  {
 
-        Optional<TaskEntity> task = taskRepository.findById(id);
+        Optional<Task> task = taskRepository.findById(id);
         if (task.isEmpty()) {
             throw new EntityNotFoundException();
         }
         return task.get();
     }
 
-    public List<TaskEntity> getAllTasks() {
+    public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public TaskEntity insertTask(Task task) {
+    public Task insertTask(TaskDto task) {
         return taskRepository.save(taskConverter.mapToEntity(task));
     }
 
-    public TaskEntity updateTask(Task task) {
-        Optional<TaskEntity> taskEntity = taskRepository.findById(task.getTaskId());
+    public Task updateTask(TaskDto task) {
+        Optional<Task> taskEntity = taskRepository.findById(task.getTaskId());
         if (taskEntity.get() == null) {
             throw new RuntimeException();
         }

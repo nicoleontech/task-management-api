@@ -1,12 +1,10 @@
 package com.sarrou.taskmanagementapi.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sarrou.api.Task;
-import com.sarrou.taskmanagementapi.task.exceptions.GlobalExceptionHandler;
+import com.sarrou.api.TaskDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,13 +42,13 @@ class TaskControllerTest {
     @MockBean
     private TaskConverter taskConverter;
 
-    private TaskEntity expectedTask() {
+    private Task expectedTask() {
         var category = new CategoryEntity(1L, "socializing");
 
-        return TaskEntity.builder()
+        return Task.builder()
                 .taskId(1L).title("project 1").category(category)
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
+                .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH).build();
 
     }
 
@@ -65,12 +63,12 @@ class TaskControllerTest {
     void getAllTasksReturnsListOfTasks() throws Exception {
         var category = new CategoryEntity(1L, "socializing");
 
-        List<TaskEntity> taskEntityList = new ArrayList<>(
-                Arrays.asList(new TaskEntity(1L, "project 1", "backend rest api", category,
+        List<Task> taskEntityList = new ArrayList<>(
+                Arrays.asList(new Task(1L, "project 1", "backend rest api", category,
                                 LocalDate.of(2023, 4, 17),
-                                Task.PriorityEnum.HIGH, Task.StatusEnum.OPEN),
-                        new TaskEntity(2L, "project 2", "testing", category, LocalDate.of(2023, 4, 17),
-                                Task.PriorityEnum.MEDIUM, Task.StatusEnum.ONGOING)));
+                                TaskDto.PriorityEnum.HIGH, TaskDto.StatusEnum.OPEN),
+                        new Task(2L, "project 2", "testing", category, LocalDate.of(2023, 4, 17),
+                                TaskDto.PriorityEnum.MEDIUM, TaskDto.StatusEnum.ONGOING)));
         when(taskManager.getAllTasks()).thenReturn(taskEntityList);
         mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -81,9 +79,9 @@ class TaskControllerTest {
     @Test
     void getTaskByIdReturnsTaskWithThatId() throws Exception {
         var category = new CategoryEntity(1L, "socializing");
-        TaskEntity taskEntity = new TaskEntity().builder().taskId(1L).title("project 1").category(category)
+        Task taskEntity = new Task().builder().taskId(1L).title("project 1").category(category)
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH).build();
+                .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH).build();
         when(taskManager.getTaskById(taskEntity.getTaskId())).thenReturn(taskEntity);
         when(taskConverter.mapToDto(any())).thenCallRealMethod();
         mockMvc.perform(MockMvcRequestBuilders.get(API_TASK_PATH + "/{taskId}", taskEntity.getTaskId()))
@@ -119,9 +117,9 @@ class TaskControllerTest {
     @Test
     void addTaskReturnsCreatedResponseStatus() throws Exception {
         var category = new CategoryEntity(1L, "socializing");
-        Task task = new Task().taskId(1L).title("project 1").categoryName(category.getName())
+        TaskDto task = new TaskDto().taskId(1L).title("project 1").categoryName(category.getName())
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+                .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH);
         when(taskManager.insertTask(task))
                 .thenReturn(expectedTask());
         ObjectMapper objectMapper = new ObjectMapper();
@@ -133,13 +131,13 @@ class TaskControllerTest {
 
     @Test
     void addTaskReturnsBadRequestWhenTitleAndCategoryAreNull() throws Exception {
-        Task task = new Task()
+        TaskDto task = new TaskDto()
                 .taskId(1L)
                 //.title("project 1")
                // .categoryName("category name")
                  .description("backend rest api")
                 .dueDate(LocalDate.of(2023, 4, 22))
-                .status(Task.StatusEnum.OPEN).priority(Task.PriorityEnum.HIGH);
+                .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH);
         when(taskManager.insertTask(task))
                 .thenReturn(expectedTask());
         ObjectMapper objectMapper = new ObjectMapper();

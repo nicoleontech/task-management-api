@@ -1,7 +1,7 @@
 package com.sarrou.taskmanagementapi.task;
 
-import com.sarrou.api.Task;
 import com.sarrou.api.TaskApi;
+import com.sarrou.api.TaskDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskDto>> getAllTasks() {
 //        List<TaskEntity> taskEntityList;
 //        try {
 //            taskEntityList = taskManager.getAllTasks();
@@ -51,11 +51,11 @@ public class TaskController implements TaskApi {
 
 
     @Override
-    public ResponseEntity<Task> getTaskById(Long taskId, String apiKey) {
-        TaskEntity taskEntity;
+    public ResponseEntity<TaskDto> getTaskById(Long taskId, String apiKey) {
+        Task taskEntity;
         try {
             taskEntity = taskManager.getTaskById(taskId);
-            Task task = taskConverter.mapToDto(taskEntity);
+            TaskDto task = taskConverter.mapToDto(taskEntity);
             // System.out.println(taskEntity.getTaskId());
             return new ResponseEntity<>(task, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
@@ -66,16 +66,16 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<Task> addTask(Task task) {
-        TaskEntity taskEntity = taskManager.insertTask(task);
-        Task taskDto = taskConverter.mapToDto(taskEntity);
+    public ResponseEntity<TaskDto> addTask(TaskDto task) {
+        Task taskEntity = taskManager.insertTask(task);
+        TaskDto taskDto = taskConverter.mapToDto(taskEntity);
         return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<Task> updateTask(Task task) {
-        TaskEntity taskEntity = taskManager.updateTask(task);
-        Task taskDto = taskConverter.mapToDto(taskEntity);
+    public ResponseEntity<TaskDto> updateTask(TaskDto task) {
+        Task taskEntity = taskManager.updateTask(task);
+        TaskDto taskDto = taskConverter.mapToDto(taskEntity);
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
