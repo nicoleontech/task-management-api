@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
 @Builder
@@ -16,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "categories")
 
-public class CategoryEntity {
+public class Category {
 
     @Id
     @Column(name = "ID")

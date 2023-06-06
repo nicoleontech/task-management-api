@@ -1,12 +1,11 @@
 package com.sarrou.taskmanagementapi.task;
 
-import com.sarrou.taskmanagementapi.task.service.CategoryEntity;
+import com.sarrou.taskmanagementapi.task.service.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
+public interface CategoryRepository extends JpaRepository<Category,Long> {
 
 
-CategoryEntity findByName(String name);
+Category findByName(String name);
 
 }

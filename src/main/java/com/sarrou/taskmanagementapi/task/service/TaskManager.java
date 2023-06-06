@@ -1,6 +1,6 @@
 package com.sarrou.taskmanagementapi.task.service;
 
-import com.sarrou.api.Task;
+import com.sarrou.api.TaskDto;
 import com.sarrou.taskmanagementapi.task.web.TaskConverter;
 import com.sarrou.taskmanagementapi.task.TaskRepository;
 import com.sarrou.taskmanagementapi.user.UserService;
@@ -28,21 +28,21 @@ public class TaskManager {
         this.userService = userService;
     }
 
-    public TaskEntity getTaskById(Long id)  {
+    public Task getTaskById(Long id)  {
 
-        Optional<TaskEntity> task = taskRepository.findById(id);
+        Optional<Task> task = taskRepository.findById(id);
         if (task.isEmpty()) {
             throw new EntityNotFoundException();
         }
         return task.get();
     }
 
-    public List<TaskEntity> getAllTasks() {
+    public List<Task> getAllTasks() {
 
         return taskRepository.findAll();
     }
 
-    public List<TaskEntity> getAllTasksForLoggedInUser() {
+    public List<Task> getAllTasksForLoggedInUser() {
         String loggedInUserEmail =userService.getLoggedInEmail();
 
         return taskRepository.findAllByUserEmail(loggedInUserEmail);
@@ -50,13 +50,13 @@ public class TaskManager {
 
 
     @Transactional
-    public TaskEntity insertTask(Task task) {
-        TaskEntity taskEntity = taskConverter.mapToEntity(task);
+    public Task insertTask(TaskDto task) {
+        Task taskEntity = taskConverter.mapToEntity(task);
         return taskRepository.save(taskEntity);
     }
 
-    public TaskEntity updateTask(Task task) {
-        Optional<TaskEntity> taskEntity = taskRepository.findById(task.getTaskId());
+    public Task updateTask(TaskDto task) {
+        Optional<Task> taskEntity = taskRepository.findById(task.getTaskId());
         if (taskEntity.get() == null) {
             throw new RuntimeException();
         }

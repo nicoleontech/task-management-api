@@ -1,14 +1,12 @@
 package com.sarrou.taskmanagementapi.task.service;
 
-import com.sarrou.api.Task;
+import com.sarrou.api.TaskDto;
 import com.sarrou.taskmanagementapi.user.User;
-import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 
@@ -18,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tasks")
-public class TaskEntity {
+public class Task {
 
     @Id
     @Column(name = "TASKID")
@@ -33,7 +31,7 @@ public class TaskEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    private Category category;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -49,12 +47,12 @@ public class TaskEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "PRIORITY")
 //    @Type(PostgreSQLEnumType.class)
-    private Task.PriorityEnum priority;
+    private TaskDto.PriorityEnum priority;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
 //    @Type(PostgreSQLEnumType.class)
-    private Task.StatusEnum status;
+    private TaskDto.StatusEnum status;
 
 
 }

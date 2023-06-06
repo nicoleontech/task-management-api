@@ -1,7 +1,7 @@
 package com.sarrou.taskmanagementapi.task.web;
 
 import com.sarrou.api.CategoryApi;
-import com.sarrou.taskmanagementapi.task.service.CategoryEntity;
+import com.sarrou.taskmanagementapi.task.service.Category;
 import com.sarrou.taskmanagementapi.task.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class CategoryController implements CategoryApi {
     @Override
     public ResponseEntity<List<String>> getAllCategoriesNames() {
         var categories = categoryService.getAllCategories()
-                .stream().map(CategoryEntity::getName).collect(Collectors.toList());
+                .stream().map(Category::getName).collect(Collectors.toList());
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 }

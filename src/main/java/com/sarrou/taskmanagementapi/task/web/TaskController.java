@@ -1,18 +1,14 @@
 package com.sarrou.taskmanagementapi.task.web;
 
-import com.sarrou.api.Task;
 import com.sarrou.api.TaskApi;
-import com.sarrou.taskmanagementapi.config.WebSecurityConfiguration;
-import com.sarrou.taskmanagementapi.task.service.TaskEntity;
+import com.sarrou.api.TaskDto;
+import com.sarrou.taskmanagementapi.task.service.Task;
 import com.sarrou.taskmanagementapi.task.service.TaskManager;
 import com.sarrou.taskmanagementapi.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +38,7 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskDto>> getAllTasks() {
 //        var taskList = taskManager.getAllTasks().stream()
 //                .map(taskConverter::mapToDto)
 //                .collect(Collectors.toList());
@@ -54,11 +50,11 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<Task> getTaskById(Long taskId, String apiKey) {
-        TaskEntity taskEntity;
+    public ResponseEntity<TaskDto> getTaskById(Long taskId, String apiKey) {
+        Task taskEntity;
         try {
             taskEntity = taskManager.getTaskById(taskId);
-            Task task = taskConverter.mapToDto(taskEntity);
+            TaskDto task = taskConverter.mapToDto(taskEntity);
             // System.out.println(taskEntity.getTaskId());
             return new ResponseEntity<>(task, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
@@ -69,16 +65,22 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<Task> addTask(Task task) {
-        TaskEntity taskEntity = taskManager.insertTask(task);
-        Task taskDto = taskConverter.mapToDto(taskEntity);
+    public ResponseEntity<TaskDto> addTask(TaskDto task) {
+        Task taskEntity = taskManager.insertTask(task);
+        TaskDto taskDto = taskConverter.mapToDto(taskEntity);
         return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Task> updateTask(Task task) {
-        TaskEntity taskEntity = taskManager.updateTask(task);
-        Task taskDto = taskConverter.mapToDto(taskEntity);
+        return null;
+    }
+
+
+    @Override
+    public ResponseEntity<TaskDto> updateTask(TaskDto task) {
+        Task taskEntity = taskManager.updateTask(task);
+        TaskDto taskDto = taskConverter.mapToDto(taskEntity);
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 

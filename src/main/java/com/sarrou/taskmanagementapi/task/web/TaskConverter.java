@@ -1,18 +1,10 @@
 package com.sarrou.taskmanagementapi.task.web;
 
-import com.sarrou.api.Task;
+import com.sarrou.api.TaskDto;
 import com.sarrou.taskmanagementapi.task.CategoryRepository;
-import com.sarrou.taskmanagementapi.task.service.TaskEntity;
+import com.sarrou.taskmanagementapi.task.service.Task;
 import com.sarrou.taskmanagementapi.user.UserService;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 /*
 Class that converts from entity to dto and vice versa.
@@ -32,30 +24,30 @@ public class TaskConverter {
     }
 
 
-    public Task mapToDto(TaskEntity taskEntity) {
-        Task task = new Task();
-        task.setTaskId(taskEntity.getTaskId());
-        task.setTitle(taskEntity.getTitle());
-        task.setDescription(taskEntity.getDescription());
-        task.setCategoryName(taskEntity.getCategory().getName());
-        task.setDueDate(taskEntity.getDueDate());
-        task.setPriority(taskEntity.getPriority());
-        task.setStatus(taskEntity.getStatus());
-        return task;
+    public TaskDto mapToDto(Task taskEntity) {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setTaskId(taskEntity.getTaskId());
+        taskDto.setTitle(taskEntity.getTitle());
+        taskDto.setDescription(taskEntity.getDescription());
+        taskDto.setCategoryName(taskEntity.getCategory().getName());
+        taskDto.setDueDate(taskEntity.getDueDate());
+        taskDto.setPriority(taskEntity.getPriority());
+        taskDto.setStatus(taskEntity.getStatus());
+        return taskDto;
     }
 
-    public TaskEntity mapToEntity(Task task) {
+    public Task mapToEntity(TaskDto taskDto) {
 
         var email = userService.getLoggedInEmail();
-        return TaskEntity.builder().
-                taskId(task.getTaskId())
-                .description(task.getDescription())
-                .title(task.getTitle())
-                .category(categoryRepository.findByName(task.getCategoryName()))
+        return Task.builder().
+                taskId(taskDto.getTaskId())
+                .description(taskDto.getDescription())
+                .title(taskDto.getTitle())
+                .category(categoryRepository.findByName(taskDto.getCategoryName()))
                 .user(userService.findUserByEmail(email))
-                .dueDate(task.getDueDate())
-                .priority(task.getPriority())
-                .status(task.getStatus()).build();
+                .dueDate(taskDto.getDueDate())
+                .priority(taskDto.getPriority())
+                .status(taskDto.getStatus()).build();
 
     }
 
