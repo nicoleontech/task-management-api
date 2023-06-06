@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "CATEGORIES")
 
-public class CategoryEntity {
+public class Category {
 
     @Id
     @Column(name = "ID")
@@ -23,7 +23,7 @@ public class CategoryEntity {
     @Column(name = "name")
     private String name;
 
-    public CategoryEntity(Long id) {
+    public Category(Long id) {
         this.id = id;
     }
 }

@@ -28,7 +28,7 @@ class TaskConverterTest {
 
     @Test
     void sutShouldConvertEntityToDto() {
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new Category(1L,"socializing");
 
         TaskDto taskDto = new TaskDto();
         taskDto.setTaskId(1L);
@@ -50,7 +50,7 @@ class TaskConverterTest {
 
     @Test
     void sutShouldThrowExceptionWhenPriorityIsNotValid() {
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new Category(1L,"socializing");
 
         assertThatThrownBy(() -> sut.mapToDto(Task.builder()
                 .taskId(1L).title("my title").category(category)
@@ -63,7 +63,7 @@ class TaskConverterTest {
     @Test
     void sutShouldThrowExceptionWhenStatusIsNotValid() {
 
-        var category = new CategoryEntity(1L,"socializing");
+        var category = new Category(1L,"socializing");
 
         assertThatThrownBy(() -> sut.mapToDto(Task.builder()
                 .taskId(1L).title("my title").category(category)
@@ -88,7 +88,7 @@ class TaskConverterTest {
         taskDto.setStatus(TaskDto.StatusEnum.OPEN);
 
         var taskEntity = Task.builder()
-                .taskId(1L).title("my title").category(categoryRepository.findCategoryEntityByName(taskDto.getCategoryName()))
+                .taskId(1L).title("my title").category(categoryRepository.findCategoryByName(taskDto.getCategoryName()))
                 .description("project").dueDate(LocalDate.now())
                 .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH).build();
 

@@ -35,7 +35,7 @@ public class TaskConverter {
                 .taskId(task.getTaskId())
                 .title(task.getTitle())
                 .description(task.getDescription())
-                .category(categoryRepository.findCategoryEntityByName(task.getCategoryName()))
+                .category(categoryRepository.findCategoryByName(task.getCategoryName()))
                 .dueDate(task.getDueDate())
                 .priority(task.getPriority())
                 .status(task.getStatus())

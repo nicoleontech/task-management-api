@@ -43,7 +43,7 @@ class TaskControllerTest {
     private TaskConverter taskConverter;
 
     private Task expectedTask() {
-        var category = new CategoryEntity(1L, "socializing");
+        var category = new Category(1L, "socializing");
 
         return Task.builder()
                 .taskId(1L).title("project 1").category(category)
@@ -61,7 +61,7 @@ class TaskControllerTest {
 
     @Test
     void getAllTasksReturnsListOfTasks() throws Exception {
-        var category = new CategoryEntity(1L, "socializing");
+        var category = new Category(1L, "socializing");
 
         List<Task> taskEntityList = new ArrayList<>(
                 Arrays.asList(new Task(1L, "project 1", "backend rest api", category,
@@ -78,7 +78,7 @@ class TaskControllerTest {
 
     @Test
     void getTaskByIdReturnsTaskWithThatId() throws Exception {
-        var category = new CategoryEntity(1L, "socializing");
+        var category = new Category(1L, "socializing");
         Task taskEntity = new Task().builder().taskId(1L).title("project 1").category(category)
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH).build();
@@ -116,7 +116,7 @@ class TaskControllerTest {
 
     @Test
     void addTaskReturnsCreatedResponseStatus() throws Exception {
-        var category = new CategoryEntity(1L, "socializing");
+        var category = new Category(1L, "socializing");
         TaskDto task = new TaskDto().taskId(1L).title("project 1").categoryName(category.getName())
                 .description("backend rest api").dueDate(LocalDate.of(2023, 4, 22))
                 .status(TaskDto.StatusEnum.OPEN).priority(TaskDto.PriorityEnum.HIGH);

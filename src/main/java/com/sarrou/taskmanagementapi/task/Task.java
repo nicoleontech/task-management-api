@@ -30,7 +30,7 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    private Category category;
 
     @Column(name = "DUE_DATE")
 //    @JsonFormat(pattern = "dd-mm-yyyy")
