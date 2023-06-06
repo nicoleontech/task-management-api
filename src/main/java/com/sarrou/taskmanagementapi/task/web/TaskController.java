@@ -71,10 +71,6 @@ public class TaskController implements TaskApi {
         return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
     }
 
-    @Override
-    public ResponseEntity<Task> updateTask(Task task) {
-        return null;
-    }
 
 
     @Override

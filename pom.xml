@@ -183,6 +183,7 @@
                             <generatorName>spring</generatorName>
                             <apiPackage>com.sarrou.api</apiPackage>
                             <modelPackage>com.sarrou.api</modelPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <generateApis>true</generateApis>
