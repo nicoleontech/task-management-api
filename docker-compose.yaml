@@ -3,13 +3,22 @@ version: '3.8'
 services:
 
   task-management:
-    image: task-management:0.0.9
+    image: task-management:0.0.13
     ports:
       - "8080:8080"
-    entrypoint: [ "java","-jar","/task-management-api.jar" ]
+    entrypoint: [ "java", "-Dspring.profiles.active=docker", "-jar", "/task-management-api.jar" ]
     depends_on:
       - keycloak
       - task-management-db
+    command:
+      - "ls"
+      - "bin/bash"
+      - "-c"
+      - "echo we re alive"
+      - "ls -la"
+      - "psql -U task_owner -W topSecret -h task-management-db -p 5432 -f api_data_script.sql"
+    volumes:
+      - ./src/main/resources/start-up/api_data_script.sql:/api_data_script.sql
 
   keycloak:
     image: keycloak/keycloak
@@ -43,8 +52,7 @@ services:
       POSTGRES_DB: task_dev_db
     ports:
       - "5433:5432"
-    volumes:
-      - apidata:/var/lib/postgresql/api
+
 
   keycloak-db:
     image: postgres:latest
