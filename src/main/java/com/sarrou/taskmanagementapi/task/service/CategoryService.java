@@ -16,18 +16,22 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAllCategories(){
+    public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public void initSetup(){
-        Category categoryEntity1 = new Category(1l,"Socializing");
-        Category categoryEntity2 = new Category(2l,"Hobbies");
-        Category categoryEntity3 = new Category(3l,"Work");
-        Category categoryEntity4 = new Category(4l,"Coding");
+    public void initSetup() {
+        Category categoryEntity1 = new Category(1l, "Socializing");
+        Category categoryEntity2 = new Category(2l, "Hobbies");
+        Category categoryEntity3 = new Category(3l, "Work");
+        Category categoryEntity4 = new Category(4l, "Coding");
         categoryRepository.save(categoryEntity1);
         categoryRepository.save(categoryEntity2);
         categoryRepository.save(categoryEntity3);
         categoryRepository.save(categoryEntity4);
+    }
+
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name);
     }
 }

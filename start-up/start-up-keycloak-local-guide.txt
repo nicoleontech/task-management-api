@@ -1,0 +1,17 @@
+SET KEYCLOAK_ADMIN=admin
+SET KEYCLOAK_ADMIN_PASSWORD=admin
+SET KC_HOSTNAME_STRICT_HTTPS=false
+SET KC_HTTP_PORT=8088
+SET KC_HTTP_RELATIVE_PATH=/auth
+SET KC_HOSTNAME_ADMIN=localhost
+SET KC_HOSTNAME=localhost
+SET KC_DB_URL=jdbc:postgresql://localhost:5432/task_dev_db?user=task_owner
+
+CD {keycloak_home} ->!!! change me, this is the root folder of the locally installed keycloak.
+MKDIR data\import
+
+!!! change me, this is the root folder of the cloned task-management-api project.
+XCOPY {api_home}\src\main\resources\start-up\realm-export.json {keycloak_home}\data\import\realm-export.json*
+
+!!! change me, this is the root folder of the locally installed keycloak.
+{keycloak_home}\bin\kc.bat --verbose start-dev --db postgres --import-realm
