@@ -177,6 +177,35 @@ paths:
           - write:tasks
           - read:tasks
 
+  /category:
+    get:
+      tags:
+        - category
+      summary: Returns all categories from the system that the user has access to
+      operationId: getAllCategoriesNames
+      responses:
+        '200':
+          description: A list of categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: names from categories
+                  type: string
+
+            application/xml:
+              schema:
+                type: array
+                items:
+                  description: names from categories
+                  type: string
+
+      security:
+        - todolist_auth:
+            - write:tasks
+            - read:tasks
+
   /user:
     post:
       tags:
@@ -365,15 +394,16 @@ components:
     Task:
       required:
         - title
-        - description
+        - categoryName
       type: object
       properties:
         taskId:
           type: integer
           format: int64
           example: 10
-        category:
-          $ref: #/components/schemas/Category
+        categoryName:
+          type: string
+          example: Socializing
         title:
           type: string
           example: fehgui

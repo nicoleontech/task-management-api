@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+
+  task-management:
+    image: task-management:latest
+    container_name: task-management-api
+    ports:
+      - "8080:8080"
+    entrypoint: [ "java", "-Dspring.profiles.active=docker", "-jar", "/task-management-api.jar" ]
+    depends_on:
+      - keycloak
+      - task-management-db
+
+  keycloak:
+    image: keycloak/keycloak
+    container_name: keycloak-identity-server
+    restart: on-failure
+    entrypoint: [ "/opt/keycloak/bin/kc.sh", "start-dev --import-realm" ]
+    volumes:
+      - C:\Users\NS\IdeaProjects\task-management-api\start-up\realm-export.json:/opt/keycloak/data/import/realm-export.json
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - DB_VENDOR=postgres
+      - DB_USER=keycloak_owner
+      - DB_PASSWORD=topSecret
+      - DB_ADDR=keycloak-db
+      - DB_PORT=5432
+      - DB_DATABASE=keycloak_dev_db
+      - KC_HOSTNAME=localhost
+      - KC_HOSTNAME_ADMIN=localhost
+      - KC_HTTP_RELATIVE_PATH=/auth
+    ports:
+      - "8088:8080"
+    depends_on:
+      - keycloak-db
+
+
+  task-management-db:
+    image: postgres:latest
+    container_name: task-management-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: topSecret
+      POSTGRES_DB: task_dev_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./start-up/docker/:/docker-entrypoint-initdb.d
+
+  keycloak-db:
+    image: postgres:latest
+    container_name: keycloak-db
+    environment:
+      POSTGRES_USER: keycloak_owner
+      POSTGRES_PASSWORD: topSecret
+      POSTGRES_DB: keycloak_dev_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  apidata:
