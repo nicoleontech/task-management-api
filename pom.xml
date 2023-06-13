@@ -44,13 +44,6 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.hypersistence/hypersistence-utils-hibernate-55 -->
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-62</artifactId>
-            <version>3.4.2</version>
-        </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -82,7 +75,6 @@
             <artifactId>keycloak-spring-boot-starter</artifactId>
             <version>21.1.1</version>
         </dependency>
-
 
 
         <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->

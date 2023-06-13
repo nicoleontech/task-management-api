@@ -46,12 +46,10 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PRIORITY")
-//    @Type(PostgreSQLEnumType.class)
     private TaskDto.PriorityEnum priority;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-//    @Type(PostgreSQLEnumType.class)
     private TaskDto.StatusEnum status;
 
 
