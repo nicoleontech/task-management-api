@@ -31,6 +31,4 @@ Tech-stack dockerized:
 - maven >= 3.9.0 https://maven.apache.org/download.cgi
 
 You need to change the first line of the start-up-docker.bat and add as root folder the cloned
-task-management-api location. Then you can run the set-up script: 
-
-`start-up\docker\start-up-docker.bat`
+task-management-api location. Then you can run the set-up script:  `start-up\docker\start-up-docker.bat`
