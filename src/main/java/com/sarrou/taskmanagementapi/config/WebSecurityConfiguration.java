@@ -28,12 +28,15 @@ public class WebSecurityConfiguration {
 
     @Bean
     SecurityFilterChain configureWebSecurity(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(csrf -> csrf.disable()).cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/status", "/actuator/headers", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/v1/task/**", "/api/v1/category").hasAnyAuthority(USER_SCOPE)
                         .anyRequest().denyAll())
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))).sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return httpSecurity.build();
     }
