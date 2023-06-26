@@ -20,26 +20,29 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class WebSecurityConfiguration {
 
-     static final String USER_SCOPE = "SCOPE_registered";
+    static final String USER_SCOPE = "SCOPE_registered";
 
-     static final String REGISTERED_USER_SCOPE = "SCOPE_registered_user";
+    static final String REGISTERED_USER_SCOPE = "SCOPE_registered_user";
 
     private final TaskGrantedAuthorityConverter taskGrantedAuthorityConverter;
 
     @Bean
     SecurityFilterChain configureWebSecurity(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().cors()
-                .configurationSource(corsConfigurationSource())
-                .and().authorizeHttpRequests(authorizeRequests -> authorizeRequests
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/status", "/actuator/headers", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/v1/task/**", "/api/v1/category").hasAnyAuthority(USER_SCOPE)
                         .anyRequest().denyAll())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))).sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return httpSecurity.build();
     }
 
-    private CorsConfigurationSource corsConfigurationSource() {
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
         var configuration = new CorsConfiguration();
         configuration.applyPermitDefaultValues();
         configuration.addAllowedMethod(HttpMethod.DELETE);
