@@ -1,11 +1,7 @@
 package com.sarrou.taskmanagementapi.user;
 
-import com.sarrou.taskmanagementapi.user.User;
-import com.sarrou.taskmanagementapi.user.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -38,7 +34,8 @@ public class UserService {
         if (authentication instanceof JwtAuthenticationToken) {
             Jwt jwt = (Jwt) authentication.getCredentials();
             String email = (String) jwt.getClaims().get("email");
-            return email;        }
+            return email;
+        }
         return null;
     }
 
