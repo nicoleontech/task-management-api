@@ -33,5 +33,6 @@ Tech-stack dockerized:
 - maven >= 3.9.0 https://maven.apache.org/download.cgi
 
 You need to change the first line of the `start-up-docker.bat` and add as root folder the cloned
-task-management-api location. You also need to change in line 21 of the `docker-compose.yaml` file the path
-Then you can run the set-up script:  `start-up\docker\start-up-docker.bat`.
+task-management-api location. You also need to change in the `docker-compose.yaml` file the root path
+of the cloned task-management-api location, which refers to the keycloak volume (line 21).
+Then, you can run the set-up script:  `start-up\docker\start-up-docker.bat`.
