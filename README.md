@@ -1,7 +1,7 @@
 # task-management-api
 
 This is the backend rest api of a task management application.
-It is built with spring-boot and uses Postgresql and the
+It is built with spring-boot, uses Postgresql as a database and the
 server stub was generated using OpenAPI Generator via its Maven plugin.
 
 ## How to set-up the needed dependencies
@@ -17,7 +17,7 @@ Tech-stack local:
 - postgresql 15: https://www.postgresql.org/download/
 
 You need to make some adjustments in order for the start-up script to work.
-For example the installation root folder of the downloaded keycloak is required in one of the .bat files.
+For example, the installation root folder of the downloaded keycloak is required in one of the .bat files.
 See start-up-keycloak-local-guide.txt for more help.
 You also need to change the first line of the start-up-local.bat and add the root folder of the cloned
 task-management-api location.
