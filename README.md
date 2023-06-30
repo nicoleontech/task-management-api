@@ -18,7 +18,7 @@ Tech-stack local:
 
 You need to make some adjustments in order for the start-up script to work.
 For example, the installation root folder of the downloaded keycloak is required in one of the .bat files.
-See start-up-keycloak-local-guide.txt for more help and make the required adjustments (wherever you see: *change me!!!* you have to
+See `start-up-keycloak-local-guide.txt` for more help and make the required adjustments (wherever you see: *change me!!!* you have to
 make these replacements providing your own local paths) in `start-up-keycloak-local.bat`.
 You also need to change the first line of the `start-up-local.bat` and add the root folder of the cloned
 task-management-api location.
