@@ -18,7 +18,7 @@ Tech-stack local:
 
 You need to make some adjustments in order for the start-up script to work.
 For example, the installation root folder of the downloaded keycloak is required in one of the .bat files.
-See `start-up-keycloak-local-guide.txt` for more help and make the required adjustments (wherever you see: *!!! change me* you have to
+See `start-up-keycloak-local-guide.txt` for more help and make the required adjustments (wherever you see: *!!! change me* you need to
 make these replacements providing your own local paths) in `start-up-keycloak-local.bat`.
 You also need to change the first line of the `start-up-local.bat` and add the root folder of the cloned
 task-management-api location.
@@ -32,5 +32,6 @@ Tech-stack dockerized:
 - Java >= 17 https://adoptium.net/temurin/releases/
 - maven >= 3.9.0 https://maven.apache.org/download.cgi
 
-You need to change the first line of the start-up-docker.bat and add as root folder the cloned
-task-management-api location. Then you can run the set-up script:  `start-up\docker\start-up-docker.bat`.
+You need to change the first line of the `start-up-docker.bat` and add as root folder the cloned
+task-management-api location. You also need to change in line 21 of the `docker-compose.yaml` file the path
+Then you can run the set-up script:  `start-up\docker\start-up-docker.bat`.
